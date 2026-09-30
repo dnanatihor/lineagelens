@@ -31,7 +31,10 @@ def test_export_rejects_unknown_format() -> None:
     assert result.exit_code == 2
 
 
-def test_unimplemented_commands_exit_2() -> None:
-    result = runner.invoke(app, ["build", "tests/fixtures/warehouse"])
-    assert result.exit_code == 2
-    assert "not implemented" in result.stderr
+def test_serve_and_ask_are_not_implemented_yet() -> None:
+    serve = runner.invoke(app, ["serve", "graph.json"])
+    ask = runner.invoke(app, ["ask", "graph.json", "what breaks?"])
+    assert serve.exit_code == 2
+    assert ask.exit_code == 2
+    assert "not implemented" in serve.stderr
+    assert "not implemented" in ask.stderr

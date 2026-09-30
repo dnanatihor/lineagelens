@@ -12,3 +12,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Package scaffold, core lineage models, CLI skeleton, and §9 fixtures.
 - Direct column lineage for one statement, pinned to the installed sqlglot node shape.
 - Project graph with indirect edges, dependency order, and non-aborting diagnostics.
+- Impact analysis and JSON, OpenLineage, and Mermaid exports.

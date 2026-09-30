@@ -21,6 +21,7 @@ lineagelens = "lineagelens.cli:app"
 dev = [
     "mypy>=1.17",
     "pytest>=8",
+    "jsonschema>=4",
     "pyyaml>=6",
     "ruff==0.16.9",
     "types-pyyaml>=6",
