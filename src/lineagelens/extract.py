@@ -1,9 +1,10 @@
-"""Per-statement direct lineage (SPEC.md section 5.4, steps 1-3 and 5).
+"""Per-statement lineage (SPEC.md section 5.4).
 
 Leaf detection follows the shape pinned in
 ``tests/spike/test_sqlglot_lineage_shape.py``: walk ``Node.downstream`` until a
 node whose ``source`` is ``exp.Table``. CTE and subquery nodes are intermediate
-and never become graph columns.
+and never become graph columns. Indirect edges are columns used in filters,
+join conditions, and GROUP BY, each linked to every output column.
 """
 
 from __future__ import annotations
@@ -12,10 +13,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 import sqlglot
-from sqlglot import TokenType, exp
+from sqlglot import exp
 from sqlglot.errors import OptimizeError, SqlglotError
 from sqlglot.lineage import Node, lineage
 from sqlglot.optimizer.qualify import qualify
+from sqlglot.optimizer.scope import Scope, build_scope
 
 from lineagelens.models import (
     ColumnRef,
@@ -27,6 +29,7 @@ from lineagelens.models import (
     StatementKind,
 )
 from lineagelens.schema import SchemaRegistry
+from lineagelens.sources.files import statement_chunks
 
 _UNSUPPORTED = (exp.Delete, exp.Update, exp.Drop, exp.Merge, exp.Alter, exp.Command)
 
@@ -38,6 +41,7 @@ class StatementExtraction:
     statement: Statement
     edges: tuple[Edge, ...]
     diagnostics: tuple[Diagnostic, ...]
+    output_columns: tuple[str, ...] = ()
 
 
 def extract_sql(
@@ -46,36 +50,24 @@ def extract_sql(
     file: str,
     dialect: str = "postgres",
     schema: SchemaRegistry | Mapping[str, Mapping[str, str]] | None = None,
+    indirect: bool = True,
+    index_offset: int = 0,
 ) -> tuple[StatementExtraction, ...]:
-    """Extract direct column lineage. Bad SQL records a diagnostic and continues."""
+    """Extract column lineage. Bad SQL records a diagnostic and continues."""
     registry = schema if isinstance(schema, SchemaRegistry) else SchemaRegistry(schema)
-    chunks = _statement_chunks(sql, dialect)
+    chunks = statement_chunks(sql, dialect)
     return tuple(
-        _extract_chunk(chunk, file=file, index=index, line=line, dialect=dialect, schema=registry)
+        _extract_chunk(
+            chunk,
+            file=file,
+            index=index_offset + index,
+            line=line,
+            dialect=dialect,
+            schema=registry,
+            indirect=indirect,
+        )
         for index, (chunk, line) in enumerate(chunks)
     )
-
-
-def _statement_chunks(sql: str, dialect: str) -> list[tuple[str, int]]:
-    try:
-        tokens = sqlglot.tokenize(sql, read=dialect)
-    except SqlglotError:
-        return [(sql, 1)] if sql.strip() else []
-    chunks: list[tuple[str, int]] = []
-    start: int | None = None
-    start_line = 1
-    for token in tokens:
-        if token.token_type == TokenType.SEMICOLON:
-            if start is not None:
-                chunks.append((sql[start : token.end], start_line))
-                start = None
-            continue
-        if start is None:
-            start = token.start
-            start_line = token.line
-    if start is not None:
-        chunks.append((sql[start:], start_line))
-    return chunks
 
 
 def _extract_chunk(
@@ -86,6 +78,7 @@ def _extract_chunk(
     line: int,
     dialect: str,
     schema: SchemaRegistry,
+    indirect: bool,
 ) -> StatementExtraction:
     statement_id = f"{file}#{index}"
     try:
@@ -105,6 +98,7 @@ def _extract_chunk(
             line=line,
             dialect=dialect,
             schema=schema,
+            indirect=indirect,
         )
     if isinstance(expression, exp.Insert):
         return _extract_insert(
@@ -115,6 +109,7 @@ def _extract_chunk(
             line=line,
             dialect=dialect,
             schema=schema,
+            indirect=indirect,
         )
     if isinstance(expression, exp.Query):
         return _extract_query(
@@ -128,6 +123,7 @@ def _extract_chunk(
             dialect=dialect,
             schema=schema,
             source=expression,
+            indirect=indirect,
         )
     if isinstance(expression, _UNSUPPORTED):
         return _failed(
@@ -150,6 +146,7 @@ def _extract_create(
     line: int,
     dialect: str,
     schema: SchemaRegistry,
+    indirect: bool,
 ) -> StatementExtraction:
     query = expression.expression
     kind_name = str(expression.args.get("kind") or "").upper()
@@ -180,6 +177,7 @@ def _extract_create(
         dialect=dialect,
         schema=schema,
         source=expression,
+        indirect=indirect,
     )
 
 
@@ -192,6 +190,7 @@ def _extract_insert(
     line: int,
     dialect: str,
     schema: SchemaRegistry,
+    indirect: bool,
 ) -> StatementExtraction:
     query = expression.expression
     target = _target_table(expression.this)
@@ -231,6 +230,7 @@ def _extract_insert(
         schema=schema,
         source=expression,
         extra_diagnostics=tuple(diagnostics),
+        indirect=indirect,
     )
 
 
@@ -247,6 +247,7 @@ def _extract_query(
     schema: SchemaRegistry,
     source: exp.Expr,
     extra_diagnostics: tuple[Diagnostic, ...] = (),
+    indirect: bool = True,
 ) -> StatementExtraction:
     statement = Statement(
         id=statement_id,
@@ -262,6 +263,7 @@ def _extract_query(
     qualified, qualify_diagnostics = _qualify(query, mapping, dialect, statement_id)
     diagnostics.extend(qualify_diagnostics)
     edges: list[Edge] = []
+    outputs: list[str] = []
     if target is not None:
         try:
             traced = lineage(None, qualified, schema=mapping, dialect=dialect)
@@ -271,6 +273,7 @@ def _extract_query(
             )
         else:
             if isinstance(traced, dict):
+                outputs = _output_names(traced)
                 edges.extend(
                     _edges_for_outputs(
                         traced,
@@ -282,10 +285,23 @@ def _extract_query(
                         diagnostics=diagnostics,
                     )
                 )
+                if indirect:
+                    edges.extend(
+                        _indirect_edges(
+                            qualified,
+                            outputs=outputs,
+                            target=target,
+                            statement_id=statement_id,
+                            file=file,
+                            line=line,
+                            dialect=dialect,
+                        )
+                    )
     return StatementExtraction(
         statement=statement,
         edges=_sorted_edges(edges),
         diagnostics=_unique_diagnostics(diagnostics),
+        output_columns=tuple(outputs),
     )
 
 
@@ -554,6 +570,83 @@ def _failed(
         edges=(),
         diagnostics=(_diagnostic(code, message, statement_id),),
     )
+
+
+def _output_names(traced: dict[str, Node]) -> list[str]:
+    names: list[str] = []
+    for output_name, node in traced.items():
+        column = _output_column(node, output_name)
+        if column != "*":
+            names.append(column)
+    return names
+
+
+def _indirect_edges(
+    query: exp.Expr,
+    *,
+    outputs: list[str],
+    target: str,
+    statement_id: str,
+    file: str,
+    line: int,
+    dialect: str,
+) -> list[Edge]:
+    if not outputs:
+        return []
+    scope = build_scope(query)
+    if not isinstance(scope, Scope) or not isinstance(scope.expression, exp.Select):
+        return []
+    select = scope.expression
+    columns: dict[EdgeSubtype, list[exp.Column]] = {
+        "FILTER": [],
+        "JOIN": [],
+        "GROUP_BY": [],
+    }
+    for key in ("where", "having", "qualify"):
+        clause = select.args.get(key)
+        if isinstance(clause, exp.Expr):
+            columns["FILTER"].extend(clause.find_all(exp.Column))
+    joins = select.args.get("joins")
+    if isinstance(joins, list):
+        for join in joins:
+            if isinstance(join, exp.Join):
+                on = join.args.get("on")
+                if isinstance(on, exp.Expr):
+                    columns["JOIN"].extend(on.find_all(exp.Column))
+    group = select.args.get("group")
+    if isinstance(group, exp.Expr):
+        columns["GROUP_BY"].extend(group.find_all(exp.Column))
+
+    edges: list[Edge] = []
+    for subtype, refs in columns.items():
+        seen: set[str] = set()
+        for column in refs:
+            source = _resolve_scoped_column(column, scope)
+            if source is None or source.fqn() in seen:
+                continue
+            seen.add(source.fqn())
+            expression = column.sql(dialect=dialect)[:200]
+            for output in outputs:
+                edges.append(
+                    Edge(
+                        source=source,
+                        target=_column_on_table(target, output),
+                        type="INDIRECT",
+                        subtype=subtype,
+                        expression=expression,
+                        statement_id=statement_id,
+                        file=file,
+                        line=line,
+                    )
+                )
+    return edges
+
+
+def _resolve_scoped_column(column: exp.Column, scope: Scope) -> ColumnRef | None:
+    source = scope.sources.get(column.table) if column.table else None
+    if isinstance(source, exp.Table):
+        return _column_on_table(_table_fqn(source), _plain_name(column.name))
+    return None
 
 
 def _sorted_edges(edges: list[Edge]) -> tuple[Edge, ...]:

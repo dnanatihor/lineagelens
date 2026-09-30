@@ -50,6 +50,14 @@ class SchemaRegistry:
             }
         return cls(tables)
 
+    def register(self, table_fqn: str, columns: list[tuple[str, str]]) -> None:
+        """Record a statement's output columns so later statements can resolve them."""
+        stored: TableColumns = {}
+        for name, column_type in columns:
+            stored[normalise_identifier(name)] = str(column_type)
+        if stored:
+            self._tables[_table_key(table_fqn)] = stored
+
     def column_names(self, table_fqn: str) -> tuple[str, ...] | None:
         columns = self._tables.get(_table_key(table_fqn))
         if columns is None:

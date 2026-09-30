@@ -43,13 +43,13 @@ def test_statement_direct_edges(dialect: str, case: str) -> None:
     assert len(results) == 1
     result = results[0]
     assert result.statement.id == f"{case}.sql#0"
-    assert {_key(edge) for edge in result.edges} == {
+    direct = [edge for edge in result.edges if edge.type == "DIRECT"]
+    assert {_key(edge) for edge in direct} == {
         _key(Edge.model_validate(item)) for item in expected["edges"]
     }
     assert [item.code for item in result.diagnostics] == [
         item["code"] for item in expected["diagnostics"]
     ]
-    assert all(edge.type == "DIRECT" for edge in result.edges)
 
 
 def test_cte_reads_are_base_tables_only() -> None:
@@ -113,6 +113,6 @@ def test_bad_statement_does_not_abort_the_next_one() -> None:
     results = extract_sql(sql, file="mixed.sql", dialect="postgres", schema=SCHEMA)
     assert [item.code for item in results[0].diagnostics] == ["L001"]
     assert results[0].edges == ()
-    assert {_key(edge) for edge in results[1].edges} == {
+    assert {_key(edge) for edge in results[1].edges if edge.type == "DIRECT"} == {
         ("raw.orders.id", "analytics.out.order_id", "DIRECT", "IDENTITY")
     }
