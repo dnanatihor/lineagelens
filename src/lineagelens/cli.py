@@ -11,14 +11,24 @@ from lineagelens import __version__
 from lineagelens.export.json import export_json, load_json
 from lineagelens.export.mermaid import export_mermaid
 from lineagelens.export.openlineage import export_openlineage
+from lineagelens.graph import LineageGraph
 from lineagelens.impact import format_impact, impact_of_change, impact_of_drop
 from lineagelens.models import ImpactResult
 from lineagelens.project import build_project
+from lineagelens.sources.dbt import DbtProjectError, build_dbt
 
 app = typer.Typer(
     no_args_is_help=True,
     help=f"LineageLens {__version__}: column-level SQL lineage.",
 )
+
+
+def _merge(left: LineageGraph, right: LineageGraph) -> LineageGraph:
+    return LineageGraph(
+        statements=(*left.statements, *right.statements),
+        edges=(*left.edges, *right.edges),
+        diagnostics=(*left.diagnostics, *right.diagnostics),
+    )
 
 
 def _unavailable(command: str) -> None:
@@ -34,22 +44,37 @@ def _require_graph(path: Path) -> None:
 
 @app.command()
 def build(
-    paths: Annotated[list[Path], typer.Argument(help="SQL files or directories.")],
+    paths: Annotated[list[Path] | None, typer.Argument(help="SQL files or directories.")] = None,
     dialect: Annotated[str, typer.Option("--dialect", help="SQL dialect.")] = "postgres",
     schema: Annotated[Path | None, typer.Option("--schema", help="Path to schema.yaml.")] = None,
     dbt: Annotated[Path | None, typer.Option("--dbt", help="dbt project directory.")] = None,
     no_indirect: Annotated[bool, typer.Option("--no-indirect")] = False,
     output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
 ) -> None:
-    """Build a lineage graph from SQL files."""
-    if dbt is not None:
-        typer.echo("dbt projects are not supported yet.", err=True)
+    """Build a lineage graph from SQL files or a dbt project."""
+    if dbt is not None and not (dbt / "target" / "manifest.json").is_file():
+        typer.echo("dbt compile is required; target/manifest.json was not found.", err=True)
         raise typer.Exit(code=2)
-    missing = [path for path in paths if not path.exists()]
+    selected = paths or []
+    if not selected and dbt is None:
+        typer.echo("Provide a SQL path or --dbt.", err=True)
+        raise typer.Exit(code=2)
+    missing = [path for path in selected if not path.exists()]
     if missing:
         typer.echo(f"Path does not exist: {missing[0]}", err=True)
         raise typer.Exit(code=2)
-    graph = build_project(paths, dialect=dialect, schema=schema, indirect=not no_indirect)
+    graph: LineageGraph | None = None
+    if selected:
+        graph = build_project(selected, dialect=dialect, schema=schema, indirect=not no_indirect)
+    if dbt is not None:
+        try:
+            dbt_graph = build_dbt(dbt, dialect=dialect, indirect=not no_indirect)
+        except DbtProjectError as exc:
+            typer.echo(str(exc), err=True)
+            raise typer.Exit(code=2) from exc
+        graph = dbt_graph if graph is None else _merge(graph, dbt_graph)
+    if graph is None:
+        raise typer.Exit(code=2)
     payload = export_json(graph)
     if output is None:
         typer.echo(payload, nl=False)

@@ -13,3 +13,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Direct column lineage for one statement, pinned to the installed sqlglot node shape.
 - Project graph with indirect edges, dependency order, and non-aborting diagnostics.
 - Impact analysis and JSON, OpenLineage, and Mermaid exports.
+- dbt manifest and catalog ingestion.
