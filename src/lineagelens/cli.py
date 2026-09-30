@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
+import uvicorn
 
 from lineagelens import __version__
 from lineagelens.export.json import export_json, load_json
@@ -15,6 +16,7 @@ from lineagelens.graph import LineageGraph
 from lineagelens.impact import format_impact, impact_of_change, impact_of_drop
 from lineagelens.models import ImpactResult
 from lineagelens.project import build_project
+from lineagelens.server import create_app
 from lineagelens.sources.dbt import DbtProjectError, build_dbt
 
 app = typer.Typer(
@@ -140,8 +142,9 @@ def serve(
     port: Annotated[int, typer.Option("--port")] = 8765,
 ) -> None:
     """Serve the interactive viewer."""
-    _ = (graph, port)
-    _unavailable("serve")
+    _require_graph(graph)
+    loaded = load_json(graph.read_text(encoding="utf-8"))
+    uvicorn.run(create_app(loaded), host="127.0.0.1", port=port)
 
 
 @app.command()

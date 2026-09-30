@@ -14,3 +14,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Project graph with indirect edges, dependency order, and non-aborting diagnostics.
 - Impact analysis and JSON, OpenLineage, and Mermaid exports.
 - dbt manifest and catalog ingestion.
+- Interactive viewer served by `lineagelens serve`, with column highlighting and impact.

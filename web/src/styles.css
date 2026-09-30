@@ -1,0 +1,71 @@
+.table-node {
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: 13px/1.3 sans-serif;
+  color: #0f172a;
+}
+
+.table-header {
+  padding: 8px 12px;
+  font-weight: 650;
+  background: #e2e8f0;
+  border-radius: 8px 8px 0 0;
+}
+
+.column-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-top: 1px solid #e2e8f0;
+}
+
+.column-button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.column-row.upstream .column-button {
+  background: #bfdbfe;
+}
+
+.column-row.downstream .column-button {
+  background: #fed7aa;
+}
+
+.column-row.selected .column-button {
+  background: #ddd6fe;
+}
+
+.column-row.impact .column-button {
+  background: #fde68a;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.toolbar {
+  width: 280px;
+  overflow: auto;
+  padding: 12px;
+  border-right: 1px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.canvas {
+  flex: 1;
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+}
