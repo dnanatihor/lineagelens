@@ -1,0 +1,77 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "union_all.sql#0",
+      "file": "union_all.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "amount",
+      "statement_id": "union_all.sql#0",
+      "file": "union_all.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "archive_orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "union_all.sql#0",
+      "file": "union_all.sql",
+      "line": 4
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "archive_orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "amount",
+      "statement_id": "union_all.sql#0",
+      "file": "union_all.sql",
+      "line": 4
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,490 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "o.id",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 3
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "o.customer_id",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 4
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "CAST(o.amount AS DECIMAL(12,2))",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 5
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "created_at"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "ordered_at"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "o.created_at",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 6
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "order_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "FILTER",
+      "expression": "o.status <> 'cancelled'",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "FILTER",
+      "expression": "o.status <> 'cancelled'",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "amount"
+      },
+      "type": "INDIRECT",
+      "subtype": "FILTER",
+      "expression": "o.status <> 'cancelled'",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "ordered_at"
+      },
+      "type": "INDIRECT",
+      "subtype": "FILTER",
+      "expression": "o.status <> 'cancelled'",
+      "statement_id": "01_stg_orders.sql#0",
+      "file": "01_stg_orders.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "customer_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 3
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "country"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "country"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "UPPER(c.country)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 4
+    },
+    {
+      "source": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "total_revenue"
+      },
+      "type": "DIRECT",
+      "subtype": "AGGREGATION",
+      "expression": "SUM(s.amount)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 5
+    },
+    {
+      "source": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "customer_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "country"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "total_revenue"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "order_count"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "customer_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "country"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "total_revenue"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "order_count"
+      },
+      "type": "INDIRECT",
+      "subtype": "JOIN",
+      "expression": "s.customer_id = c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "customer_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "country"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "total_revenue"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "order_count"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "c.id",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "country"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "customer_id"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "UPPER(c.country)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "country"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "country"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "UPPER(c.country)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "country"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "total_revenue"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "UPPER(c.country)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "country"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "fct_customer_revenue",
+        "column": "order_count"
+      },
+      "type": "INDIRECT",
+      "subtype": "GROUP_BY",
+      "expression": "UPPER(c.country)",
+      "statement_id": "02_fct_revenue.sql#0",
+      "file": "02_fct_revenue.sql",
+      "line": 9
+    }
+  ]
+}

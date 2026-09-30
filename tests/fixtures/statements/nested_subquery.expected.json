@@ -1,0 +1,23 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "sub.id",
+      "statement_id": "nested_subquery.sql#0",
+      "file": "nested_subquery.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,44 @@
+{
+  "edges": [
+    {
+      "source": {
+        "database": "analytics",
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "database": "analytics",
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "models/staging/stg_orders.sql#0",
+      "file": "models/staging/stg_orders.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "database": "analytics",
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "database": "analytics",
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "CAST(amount AS DECIMAL(12, 2))",
+      "statement_id": "models/staging/stg_orders.sql#0",
+      "file": "models/staging/stg_orders.sql",
+      "line": 3
+    }
+  ]
+}

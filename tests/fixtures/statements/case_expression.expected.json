@@ -1,0 +1,59 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "flagged",
+        "column": "id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "case_expression.sql#0",
+      "file": "case_expression.sql",
+      "line": 3
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "flagged",
+        "column": "net_amount"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "CASE WHEN status = 'cancelled' THEN 0 ELSE amount END",
+      "statement_id": "case_expression.sql#0",
+      "file": "case_expression.sql",
+      "line": 4
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "flagged",
+        "column": "net_amount"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "CASE WHEN status = 'cancelled' THEN 0 ELSE amount END",
+      "statement_id": "case_expression.sql#0",
+      "file": "case_expression.sql",
+      "line": 4
+    }
+  ],
+  "diagnostics": []
+}

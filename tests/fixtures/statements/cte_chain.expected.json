@@ -1,0 +1,41 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "cte_chain.sql#0",
+      "file": "cte_chain.sql",
+      "line": 8
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "out",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "amount * 2",
+      "statement_id": "cte_chain.sql#0",
+      "file": "cte_chain.sql",
+      "line": 6
+    }
+  ],
+  "diagnostics": []
+}

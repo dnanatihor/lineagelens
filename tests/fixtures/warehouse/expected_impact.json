@@ -1,0 +1,122 @@
+{
+  "change": {
+    "raw.orders.amount": {
+      "direct": [
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "amount"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "total_revenue"
+        }
+      ],
+      "indirect": []
+    },
+    "raw.orders.status": {
+      "direct": [],
+      "indirect": [
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "order_id"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "customer_id"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "amount"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "ordered_at"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "customer_id"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "country"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "total_revenue"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "order_count"
+        }
+      ]
+    }
+  },
+  "drop": {
+    "raw.orders.status": {
+      "failing_statements": [
+        "01_stg_orders.sql#0"
+      ],
+      "broken_tables": [
+        "staging.stg_orders",
+        "marts.fct_customer_revenue"
+      ],
+      "affected_columns": [
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "order_id"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "customer_id"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "amount"
+        },
+        {
+          "schema": "staging",
+          "table": "stg_orders",
+          "column": "ordered_at"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "customer_id"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "country"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "total_revenue"
+        },
+        {
+          "schema": "marts",
+          "table": "fct_customer_revenue",
+          "column": "order_count"
+        }
+      ]
+    },
+    "raw.customers.email": {
+      "failing_statements": [],
+      "broken_tables": [],
+      "affected_columns": []
+    }
+  }
+}

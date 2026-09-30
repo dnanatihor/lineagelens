@@ -1,0 +1,41 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "v_orders",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "create_view.sql#0",
+      "file": "create_view.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "v_orders",
+        "column": "status_name"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "LOWER(status)",
+      "statement_id": "create_view.sql#0",
+      "file": "create_view.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

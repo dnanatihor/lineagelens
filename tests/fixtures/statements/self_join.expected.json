@@ -1,0 +1,41 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "pairs",
+        "column": "left_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "a.id",
+      "statement_id": "self_join.sql#0",
+      "file": "self_join.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "pairs",
+        "column": "right_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "b.id",
+      "statement_id": "self_join.sql#0",
+      "file": "self_join.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

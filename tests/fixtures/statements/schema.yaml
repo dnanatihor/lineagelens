@@ -1,0 +1,21 @@
+raw.orders:
+  id: BIGINT
+  customer_id: BIGINT
+  amount: DECIMAL
+  created_at: TIMESTAMP
+  status: VARCHAR
+raw.customers:
+  id: BIGINT
+  country: VARCHAR
+  email: VARCHAR
+raw.archive_orders:
+  id: BIGINT
+  amount: DECIMAL
+staging.stg_orders:
+  order_id: BIGINT
+  customer_id: BIGINT
+  amount: DECIMAL
+  ordered_at: TIMESTAMP
+marts.summary:
+  customer_id: BIGINT
+  total: DECIMAL

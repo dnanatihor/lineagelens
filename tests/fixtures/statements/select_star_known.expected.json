@@ -1,0 +1,95 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "copy_orders",
+        "column": "id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "select_star_known.sql#0",
+      "file": "select_star_known.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "copy_orders",
+        "column": "customer_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "customer_id",
+      "statement_id": "select_star_known.sql#0",
+      "file": "select_star_known.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "copy_orders",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "amount",
+      "statement_id": "select_star_known.sql#0",
+      "file": "select_star_known.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "created_at"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "copy_orders",
+        "column": "created_at"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "created_at",
+      "statement_id": "select_star_known.sql#0",
+      "file": "select_star_known.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "status"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "copy_orders",
+        "column": "status"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "status",
+      "statement_id": "select_star_known.sql#0",
+      "file": "select_star_known.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

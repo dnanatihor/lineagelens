@@ -1,0 +1,77 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "ranked",
+        "column": "id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "window_function.sql#0",
+      "file": "window_function.sql",
+      "line": 3
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "ranked",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "amount",
+      "statement_id": "window_function.sql#0",
+      "file": "window_function.sql",
+      "line": 4
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "ranked",
+        "column": "rn"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at)",
+      "statement_id": "window_function.sql#0",
+      "file": "window_function.sql",
+      "line": 5
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "created_at"
+      },
+      "target": {
+        "schema": "analytics",
+        "table": "ranked",
+        "column": "rn"
+      },
+      "type": "DIRECT",
+      "subtype": "TRANSFORMATION",
+      "expression": "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at)",
+      "statement_id": "window_function.sql#0",
+      "file": "window_function.sql",
+      "line": 5
+    }
+  ],
+  "diagnostics": []
+}

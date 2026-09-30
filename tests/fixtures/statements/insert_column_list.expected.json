@@ -1,0 +1,41 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "customers",
+        "column": "id"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "summary",
+        "column": "customer_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "c.id",
+      "statement_id": "insert_column_list.sql#0",
+      "file": "insert_column_list.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "marts",
+        "table": "summary",
+        "column": "total"
+      },
+      "type": "DIRECT",
+      "subtype": "AGGREGATION",
+      "expression": "SUM(o.amount)",
+      "statement_id": "insert_column_list.sql#0",
+      "file": "insert_column_list.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

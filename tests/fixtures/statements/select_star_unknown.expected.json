@@ -1,0 +1,11 @@
+{
+  "edges": [],
+  "diagnostics": [
+    {
+      "code": "L002",
+      "severity": "error",
+      "statement_id": "select_star_unknown.sql#0",
+      "message": "Unknown table raw.unknown_table; SELECT * cannot be expanded."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "edges": [
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "order_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "id",
+      "statement_id": "insert_no_column_list.sql#0",
+      "file": "insert_no_column_list.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "customer_id"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "customer_id"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "customer_id",
+      "statement_id": "insert_no_column_list.sql#0",
+      "file": "insert_no_column_list.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "amount"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "amount"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "amount",
+      "statement_id": "insert_no_column_list.sql#0",
+      "file": "insert_no_column_list.sql",
+      "line": 2
+    },
+    {
+      "source": {
+        "schema": "raw",
+        "table": "orders",
+        "column": "created_at"
+      },
+      "target": {
+        "schema": "staging",
+        "table": "stg_orders",
+        "column": "ordered_at"
+      },
+      "type": "DIRECT",
+      "subtype": "IDENTITY",
+      "expression": "created_at",
+      "statement_id": "insert_no_column_list.sql#0",
+      "file": "insert_no_column_list.sql",
+      "line": 2
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,10 @@
+raw.orders:
+  id: INTEGER
+  customer_id: INTEGER
+  amount: DECIMAL
+  created_at: TIMESTAMP
+  status: VARCHAR
+raw.customers:
+  id: INTEGER
+  country: VARCHAR
+  email: VARCHAR

@@ -1,0 +1,11 @@
+{
+  "edges": [],
+  "diagnostics": [
+    {
+      "code": "L001",
+      "severity": "error",
+      "statement_id": "unparsable.sql#0",
+      "message": "Unparsable statement."
+    }
+  ]
+}
