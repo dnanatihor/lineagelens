@@ -15,3 +15,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Impact analysis and JSON, OpenLineage, and Mermaid exports.
 - dbt manifest and catalog ingestion.
 - Interactive viewer served by `lineagelens serve`, with column highlighting and impact.
+- Lineage agent with scripted-model tests, and a README whose Quickstart runs in CI.

@@ -28,3 +28,11 @@ jobs:
       - run: uv run pytest
       - run: uv build
       - run: uv run python -c "import glob, zipfile; names = zipfile.ZipFile(glob.glob('dist/*.whl')[0]).namelist(); assert any(name.endswith('web/dist/index.html') for name in names)"
+
+  quickstart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - name: Quickstart
+        run: uv run --frozen lineagelens build tests/fixtures/warehouse -o graph.json && uv run --frozen lineagelens impact graph.json --drop raw.orders.status && uv run --frozen lineagelens export graph.json --format mermaid --level table

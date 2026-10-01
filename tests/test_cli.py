@@ -39,10 +39,16 @@ def test_export_rejects_unknown_format() -> None:
     assert result.exit_code == 2
 
 
-def test_ask_is_not_implemented_yet() -> None:
-    ask = runner.invoke(app, ["ask", "graph.json", "what breaks?"])
-    assert ask.exit_code == 2
-    assert "not implemented" in ask.stderr
+def test_ask_prints_the_agent_answer(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    graph = tmp_path / "graph.json"
+    graph.write_text(export_json(build_project([WAREHOUSE])), encoding="utf-8")
+    monkeypatch.setattr(
+        "lineagelens.cli.answer",
+        lambda lineage, question: "will break 01_stg_orders.sql:1",
+    )
+    result = runner.invoke(app, ["ask", str(graph), "what breaks if I drop raw.orders.status?"])
+    assert result.exit_code == 0
+    assert "01_stg_orders.sql:1" in result.stdout
 
 
 def test_serve_loads_the_warehouse_graph(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

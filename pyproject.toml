@@ -7,6 +7,9 @@ requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
     "fastapi>=0.142.2",
+    "langchain>=1.4.3",
+    "langchain-core>=0.3",
+    "langgraph>=0.2",
     "networkx>=3",
     "pydantic>=2",
     "pyyaml>=6",

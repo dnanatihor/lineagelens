@@ -11,6 +11,9 @@ dist/
 build/
 *.egg-info/
 
+# Generated graphs
+graph.json
+
 # Node
 node_modules/
 

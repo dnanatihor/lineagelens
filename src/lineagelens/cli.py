@@ -9,6 +9,7 @@ import typer
 import uvicorn
 
 from lineagelens import __version__
+from lineagelens.agent.graph import answer
 from lineagelens.export.json import export_json, load_json
 from lineagelens.export.mermaid import export_mermaid
 from lineagelens.export.openlineage import export_openlineage
@@ -31,11 +32,6 @@ def _merge(left: LineageGraph, right: LineageGraph) -> LineageGraph:
         edges=(*left.edges, *right.edges),
         diagnostics=(*left.diagnostics, *right.diagnostics),
     )
-
-
-def _unavailable(command: str) -> None:
-    typer.echo(f"lineagelens {command} is not implemented yet.", err=True)
-    raise typer.Exit(code=2)
 
 
 def _require_graph(path: Path) -> None:
@@ -153,5 +149,6 @@ def ask(
     question: Annotated[str, typer.Argument(help="Question about lineage impact.")],
 ) -> None:
     """Ask the lineage agent a question."""
-    _ = (graph, question)
-    _unavailable("ask")
+    _require_graph(graph)
+    loaded = load_json(graph.read_text(encoding="utf-8"))
+    typer.echo(answer(loaded, question))
