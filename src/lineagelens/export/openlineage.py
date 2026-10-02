@@ -8,7 +8,7 @@ from collections import defaultdict
 from lineagelens.graph import LineageGraph
 from lineagelens.models import Edge
 
-_PRODUCER = "https://github.com/ovaledge/lineagelens"
+_PRODUCER = "https://github.com/dnanatihor/lineagelens"
 _SCHEMA_URL = "https://openlineage.io/spec/facets/1-2-0/ColumnLineageDatasetFacet.json"
 _NAMESPACE = "lineagelens"
 

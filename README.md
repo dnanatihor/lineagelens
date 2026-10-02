@@ -1,6 +1,6 @@
 # LineageLens — Column-level SQL lineage, impact analysis, viewer, and agent
 
-[![CI](https://github.com/ovaledge/lineagelens/actions/workflows/ci.yml/badge.svg)](https://github.com/ovaledge/lineagelens/actions/workflows/ci.yml)
+[![CI](https://github.com/dnanatihor/lineagelens/actions/workflows/ci.yml/badge.svg)](https://github.com/dnanatihor/lineagelens/actions/workflows/ci.yml)
 [![Licence](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/lineagelens)](https://pypi.org/project/lineagelens/)
 

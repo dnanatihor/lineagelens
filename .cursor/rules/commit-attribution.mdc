@@ -1,0 +1,12 @@
+---
+description: Keep git commits authored only by the repository owner
+alwaysApply: true
+---
+
+# Commit attribution
+
+- Author and committer must stay the repository owner. Do not set Cursor, the agent, or `cursoragent@cursor.com` as author or committer.
+- Do not add `Co-authored-by: Cursor` or any other Cursor trailer to a commit message.
+- Do not amend, rebase, or filter history to insert an agent identity.
+
+The product still appends the trailer unless attribution is turned off in Cursor Settings > Agent > Attribution. This rule cannot disable that toggle.
