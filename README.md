@@ -23,10 +23,10 @@ Requires [uv](https://docs.astral.sh/uv/) and the repository checkout. `graph.js
 ```mermaid
 flowchart LR
   sources[SQL files and dbt] --> extract[sqlglot extraction]
-  extract --> graph[Column graph]
-  graph --> impact[Impact and exports]
-  graph --> viewer[Viewer]
-  graph --> agent[ReAct agent]
+  extract --> columns[Column graph]
+  columns --> impact[Impact and exports]
+  columns --> viewer[Viewer]
+  columns --> agent[ReAct agent]
 ```
 
 `lineagelens build` parses SQL and optional dbt `target/manifest.json`, records diagnostics instead of aborting, and writes a column graph. `impact` answers a value change and a drop separately. `serve` opens the viewer. `ask` runs the agent with `LINEAGELENS_MODEL` (default `openai:gpt-4.1-mini`); it may only repeat tool results.
