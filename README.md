@@ -4,8 +4,6 @@
 [![Licence](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/lineagelens)](https://pypi.org/project/lineagelens/)
 
-<!-- TODO: replace docs/demo.gif with a recorded viewer demo (click a column, then Impact). -->
-
 ![demo](docs/demo.gif)
 
 ## Why
@@ -67,7 +65,6 @@ flowchart LR
 ## Roadmap
 
 - Server-side subgraph extraction for graphs past the viewer collapse threshold.
-- A recorded viewer demo in place of the placeholder GIF.
 
 ## Licence
 
